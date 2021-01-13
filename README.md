@@ -31,4 +31,4 @@ cat origin-of-species.txt | docker run -i nr-problem cat
 
 **Are there bugs that you are aware of?**
 
-N/A
+- Counting might be slightly off

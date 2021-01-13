@@ -87,22 +87,21 @@ func readFromStream(reader io.Reader, batchSize int) <-chan []string {
 		curWords := make([]string, 0)
 		s := bufio.NewScanner(reader)
 		s.Split(bufio.ScanWords)
-		curBatch := 0
 		for s.Scan() {
 			if err := s.Err(); err != nil {
 				log.Fatal(err)
 			}
-			if curBatch <= batchSize {
+			if len(curWords) < batchSize-1 {
 				curWords = append(curWords, s.Text())
-				curBatch++
 			} else {
 				curWords = append(curWords, s.Text())
 				ch <- curWords
 				curWords = curWords[len(curWords)-2:] // retain the last 2 words so that the 3 word sequence is counted
-				curBatch = 0
 			}
 		}
-		ch <- curWords
+		if len(curWords) > 2 {
+			ch <- curWords
+		}
 		close(ch)
 	}()
 	return ch
